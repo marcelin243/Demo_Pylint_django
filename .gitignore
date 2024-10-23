@@ -1,0 +1,16 @@
+#==============================================
+# GOUV_CHECK ET AUTRES MODULES
+# =============================================
+autres_modules/__pycache__/
+pylint_demo/__pycache__/
+#
+media/
+#==============================================
+# exemple
+# =============================================
+
+exemple/__pycache__/
+exemple/migrations/
+exemple/migrations/__pycache__/
+
+
