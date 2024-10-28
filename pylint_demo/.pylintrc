@@ -30,6 +30,9 @@ disable=
     too-many-return-statements,
     unused-argument
 
+# Removed bad-whitespace and line-too-long from disable list
+# if you want to allow some whitespace checks, you can include specific ones
+
 [SIMILARITIES]
 min-similarity-lines=4
 ignore-comments=yes

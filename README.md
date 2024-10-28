@@ -21,6 +21,7 @@ Utilisation
 -------------
 1. Analyser un projet : Exécutez pylint sur vos applications Django avec la commande  
             Avant d'exécuter pylint, vous devez définir la variable DJANGO_SETTINGS_MODULE pour indiquer où se trouvent les paramètres de votre projet
+           => $env:DJANGO_SETTINGS_MODULE = "pylint_demo.settings"; python -m pylint --load-plugins=pylint_django exemple/
              - set DJANGO_SETTINGS_MODULE=projet_name.settings
              - python -m pylint exemple/    (exemple represente le nom de l'application)
                         Cela analysera votre code et vous fournira des rapports sur les problèmes détectés, tels que :

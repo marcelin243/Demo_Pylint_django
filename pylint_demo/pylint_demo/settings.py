@@ -27,6 +27,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# settings.py
+
+import os
+
+HTTP_PROXY = os.getenv("HTTP_PROXY", "http://127.0.0.1:8080")
 
 # Application definition
 
