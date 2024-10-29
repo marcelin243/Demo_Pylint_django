@@ -46,7 +46,7 @@ jobs:
 
       - name: Run DAST (OWASP ZAP)
         run: |
-          docker run -t owasp/zap2docker-stable zap-full-scan.py -t http://localhost:8000 -r zap_report.html
+          docker run -t owasp/zap2docker-stable:2.11.1 zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
