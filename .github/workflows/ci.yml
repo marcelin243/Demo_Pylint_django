@@ -41,6 +41,9 @@ jobs:
         run: |
           python pylint_demo/manage.py runserver 0.0.0.0:8000 &
 
+      - name: Docker Login
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
       - name: Run DAST (OWASP ZAP)
         run: |
           docker run -t owasp/zap2docker-stable zap-full-scan.py -t http://localhost:8000 -r zap_report.html
@@ -48,5 +51,5 @@ jobs:
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
-          name: reports global
+          name: Reports global
           path: test_report.txt zap_report.html
