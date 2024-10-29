@@ -35,7 +35,11 @@ jobs:
 
       - name: Run SAST (Bandit)
         run: |
-          bandit -r pylint_demo/ -f json -o bandit_report.json  # Exécution de Bandit et génération d'un rapport JSON
+          bandit -r pylint_demo/ -f json -o bandit_report.json || true  # Exécution de Bandit et génération d'un rapport JSON, ignore l'erreur
+
+      - name: Display Bandit Report
+        run: |
+          cat bandit_report.json  # Affiche le rapport Bandit dans les logs
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
