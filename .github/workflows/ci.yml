@@ -42,13 +42,11 @@ jobs:
           python pylint_demo/manage.py runserver 0.0.0.0:8000 &  # Démarrer le serveur Django en arrière-plan
 
       - name: Run DAST (OWASP ZAP)
-        uses: zaproxy/action-full-scan@v0.5.0
-        with:
-          target: 'http://localhost:8000'  # URL de votre application Django
-          zap_options: '-X api.apikey=${{ secrets.ZAP_API_KEY }}'  # Remplacez par votre clé API si nécessaire
+        run: |
+          docker run -t owasp/zap2docker-stable zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
           name: reports global
-          path: test_report.txt  # Inclure uniquement le rapport des tests
+          path: test_report.txt zap_report.html  # Inclure les rapports
