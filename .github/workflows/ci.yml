@@ -30,11 +30,11 @@ jobs:
       
       - name: Run Tests
         run: |
-          python manage.py test --verbosity=2 | tee test_report.txt  # Utiliser python au lieu de py
+          python pylint_demo/manage.py test --verbosity=2 
 
       - name: Run Pylint
         run: |
-          pylint exemple > pylint_report.txt  # Redirige les résultats de pylint vers un fichier
+          python -m pylint --load-plugins=pylint_django exemple/  # Redirige les résultats de pylint vers un fichier
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
