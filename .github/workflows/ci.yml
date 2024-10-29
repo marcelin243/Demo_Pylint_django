@@ -34,4 +34,4 @@ jobs:
 
       - name: Run Pylint
         run: |
-          pylint pylint_demo/exemple/  # Remplacez par le nom de votre application
+          pylint exemple/  # Remplacez par le nom de votre application
