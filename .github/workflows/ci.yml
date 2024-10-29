@@ -26,20 +26,16 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r pylint_demo/requirements.txt
+          pip install -r requirements.txt
           pip install bandit  # Installation de Bandit
       
       - name: Run Tests
         run: |
           python pylint_demo/manage.py test --verbosity=2 | tee test_report.txt  # Exécute les tests
 
-      - name: Run Bandit
+      - name: Run SAST (Bandit)
         run: |
-          bandit -r pylint_demo/ > bandit_report.txt  # Analyse de sécurité avec Bandit
-
-      - name: Run Pylint
-        run: |
-          pylint pylint_demo/exemple > pylint_report.txt  # Analyse de code avec Pylint
+          bandit -r pylint_demo/ -f json -o bandit_report.json  # Exécution de Bandit et génération d'un rapport JSON
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
@@ -47,5 +43,4 @@ jobs:
           name: reports
           path: |
             test_report.txt
-            bandit_report.txt
-            pylint_report.txt
+            bandit_report.json  # Inclure le rapport Bandit
