@@ -1,12 +1,14 @@
 # myapp/urls.py
 
-# from django.urls import path
+from django.urls import path,include
 from rest_framework import routers  # Import tiers
 from .views import UserListCreateView  # Import local
 
 router = routers.DefaultRouter()
-router.register("users", UserListCreateView)
 
-# urlpatterns = [
-#     path('users/', UserListCreateView.as_view(), name='user-list-create'),
-# ]
+router.register(r'api/utilisateur', UserListCreateView)
+
+urlpatterns = [
+    path('', include(router.urls)),  # Inclure les URLs du routeur
+]
+
