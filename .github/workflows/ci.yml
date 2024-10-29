@@ -30,8 +30,8 @@ jobs:
       
       - name: Run Tests
         run: |
-          python pylint_demo/manage.py test
+          python manage.py test
 
       - name: Run Pylint
         run: |
-          pylint  exemple/
+          python -m pylint --load-plugins=pylint_django pylint_django
