@@ -42,10 +42,8 @@ jobs:
           python pylint_demo/manage.py runserver 0.0.0.0:8000 &
 
       - name: Run DAST (OWASP ZAP)
-        uses: zaproxy/action-full-scan@v0.4.0
-        with:
-          target: 'http://localhost:8000'
-          token: ${{ secrets.ZAP_API_KEY }} # Si vous utilisez une clé API
+        run: |
+          docker run -t owasp/zap2docker-stable zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
