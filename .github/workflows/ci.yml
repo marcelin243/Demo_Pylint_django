@@ -41,5 +41,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: reports
-          path: |
-            test_report.txt  # Inclure uniquement le rapport des tests
+          path: test_report.txt  # Inclure uniquement le rapport des tests
+
+            
