@@ -31,15 +31,15 @@ jobs:
       
       - name: Run Tests
         run: |
-          python pylint_demo/manage.py test --verbosity=2
+          python pylint_demo/manage.py test --verbosity=2 | tee test_report.txt  # Exécute les tests
 
       - name: Run SAST (Bandit)
         run: |
-          bandit -r pylint_demo/ -f text  # Exécution de Bandit et affichage des résultats dans les logs
+          bandit -r pylint_demo/ -f screen  # Exécution de Bandit et affichage des résultats dans les logs
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
           name: reports
           path: |
-            test_report.txt  # Inclure uniquement le rapport des tests, pas Bandit
+            test_report.txt  # Inclure uniquement le rapport des tests
