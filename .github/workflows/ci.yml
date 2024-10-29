@@ -34,4 +34,4 @@ jobs:
 
       - name: Run Pylint
         run: |
-          python -m pylint --load-plugins=pylint_django pylint_demo
+          python -m pylint --load-plugins=pylint_django exemple/

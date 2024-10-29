@@ -11,4 +11,3 @@ router.register(r'api/utilisateur', UserListCreateView)
 urlpatterns = [
     path('', include(router.urls)),  # Inclure les URLs du routeur
 ]
-
