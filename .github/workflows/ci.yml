@@ -30,7 +30,7 @@ jobs:
       
       - name: Run Tests
         run: |
-          python pylint_demo/manage.py test > test_report.txt  # Redirige les résultats des tests vers un fichier
+          python pylint_demo/manage.py test --verbosity=2 | tee test_report.txt  # Affiche et redirige les résultats
 
       - name: Run Pylint
         run: |
