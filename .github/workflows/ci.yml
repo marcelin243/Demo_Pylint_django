@@ -26,12 +26,20 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r pylint_demo/requirements.txt
       
       - name: Run Tests
         run: |
-          python pylint_demo/manage.py test
+          python pylint_demo/manage.py test > test_report.txt  # Redirige les résultats des tests vers un fichier
 
       - name: Run Pylint
         run: |
-          pylint exemple  # Remplacez par le nom de votre application
+          pylint pylint_demo/exemple > pylint_report.txt  # Redirige les résultats de pylint vers un fichier
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: |
+            test_report.txt
+            pylint_report.txt
