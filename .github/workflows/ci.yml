@@ -48,7 +48,7 @@ jobs:
         run: git clone https://github.com/zaproxy/zaproxy.git
 
       - name: Build OWASP ZAP Docker Image
-        run: docker build -t zaproxy/zaproxy zaproxy/docker/
+        run: docker build -t zaproxy/zaproxy zaproxy/docker/zap-core/
 
       - name: Run DAST (OWASP ZAP)
         run: |
