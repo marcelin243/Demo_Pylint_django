@@ -45,17 +45,22 @@ jobs:
         run: sleep 10
 
       - name: Clone OWASP ZAP Docker Repository
-        run: git clone https://github.com/zaproxy/zap-docker.git
+        uses: actions/checkout@v4
+        with:
+          repository: zaproxy/zap-docker
+          path: zap-docker
 
       - name: Build OWASP ZAP Docker Image
         run: docker build -t zaproxy/zaproxy zap-docker/
 
       - name: Run DAST (OWASP ZAP)
         run: |
-          docker run -t zaproxy/zaproxy zap-full-scan.py -t http://host.docker.internal:8000 -r zap_report.html
+          docker run --network host -t zaproxy/zaproxy zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
-          name: Reports global
-          path: test_report.txt zap_report.html
+          name: Reports
+          path: |
+            test_report.txt
+            zap_report.html
