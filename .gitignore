@@ -12,6 +12,7 @@ media/
 exemple/__pycache__/
 # exemple/migrations/
 # exemple/migrations/__pycache__/
+pylint_demo/exemple/__pycache__
 
 pylint_demo/exemple/__pycache__/
 pylint_demo/__init__.py
