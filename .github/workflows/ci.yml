@@ -40,9 +40,20 @@ jobs:
       - name: Start Django Server
         run: |
           python pylint_demo/manage.py runserver 0.0.0.0:8000 &
-      
+
       - name: Wait for Server to Start
-        run: sleep 10
+        run: |
+          for i in {1..30}; do 
+            if curl -s http://localhost:8000 > /dev/null; then 
+              echo "Django server is up and running.";
+              break; 
+            fi; 
+            echo "Waiting for server to start..."; 
+            sleep 1; 
+          done
+
+      - name: Create Docker Network
+        run: docker network create zap-network || echo "Network already exists"
 
       - name: Clone OWASP ZAP Docker Repository
         uses: actions/checkout@v4
@@ -55,7 +66,7 @@ jobs:
 
       - name: Run DAST (OWASP ZAP)
         run: |
-          docker run --network host -t zaproxy/zaproxy zap-full-scan.py -t http://localhost:8000 -r zap_report.html
+          docker run --network zap-network --name zaproxy -t zaproxy/zaproxy zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
