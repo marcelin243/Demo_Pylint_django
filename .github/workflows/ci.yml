@@ -58,7 +58,7 @@ jobs:
       - name: Clone OWASP ZAP Docker Repository
         uses: actions/checkout@v4
         with:
-          repository: zaproxy/zap-docker
+          repository: zaproxy/zaproxy
           path: zap-docker
 
       - name: Build OWASP ZAP Docker Image
