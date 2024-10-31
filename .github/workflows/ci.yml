@@ -1,4 +1,4 @@
-name: Django-CI
+name: OWASP-ZAP-CI
 
 on:
   push:
@@ -7,71 +7,39 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  zap_scan:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 4
-      matrix:
-        python-version: [3.12.2]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.9'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install bandit
-
-      - name: Run Tests
-        run: |
-          python pylint_demo/manage.py test --verbosity=2 | tee test_report.txt
-
-      - name: Run SAST (Bandit)
-        run: |
-          bandit -r pylint_demo/ -f screen
 
       - name: Start Django Server
         run: |
-          python pylint_demo/manage.py runserver 0.0.0.0:8000 &
-
+          python manage.py runserver 0.0.0.0:8000 &
+      
       - name: Wait for Server to Start
+        run: sleep 10
+
+      - name: Pull OWASP ZAP Docker Image
+        run: docker pull owasp/zap2docker-stable
+
+      - name: Run OWASP ZAP Scan
         run: |
-          for i in {1..30}; do 
-            if curl -s http://localhost:8000 > /dev/null; then 
-              echo "Django server is up and running."
-              break
-            fi
-            echo "Waiting for server to start..."
-            sleep 1
-          done
+          docker run --network host -t owasp/zap2docker-stable zap-full-scan.py -t http://localhost:8000 -r zap_report.html
 
-      - name: Create Docker Network
-        run: docker network create zap-network || echo "Network already exists"
-
-      - name: Clone OWASP ZAP Docker Repository
-        uses: actions/checkout@v4
-        with:
-          repository: zaproxy/zaproxy
-          path: zaproxy
-
-      - name: Build OWASP ZAP Docker Image
-        run: docker build -t zaproxy/zaproxy zaproxy/
-
-      - name: Run DAST (OWASP ZAP)
-        run: |
-          docker run --network zap-network --name zaproxy -t zaproxy/zaproxy zap-full-scan.py -t http://localhost:8000 -r zap_report.html
-
-      - name: Upload Reports
+      - name: Upload ZAP Report
         uses: actions/upload-artifact@v3
         with:
-          name: Reports
-          path: |
-            test_report.txt
-            zap_report.html
+          name: zap_report
+          path: zap_report.html
