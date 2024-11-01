@@ -27,37 +27,30 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install bandit
+          pip install bandit  # Installation de Bandit
       
       - name: Run Tests
-        run: python manage.py test
+        run: |
+          python manage.py test --verbosity=2 | tee test_report.html  # Exécute les tests
 
       - name: Run SAST (Bandit)
         run: |
-          bandit -r pylint_demo/ -f screen
+          bandit -r pylint_demo/ -f screen  # Exécution de Bandit et affichage des résultats dans les logs
 
-      - name: Start Django Server
-        run: |
-          python pylint_demo/manage.py runserver 0.0.0.0:8000 &
-
-      - name: Wait for Server to Start
-        run: |
-          for i in {1..30}; do 
-            if curl -s http://localhost:8000 > /dev/null; then 
-              echo "Django server is up and running.";
-              break; 
-            fi; 
-            echo "Waiting for server to start..."; 
-            sleep 1; 
-          done
-
-      
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.13.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Assurez-vous que ce token a les bonnes permissions
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
+          target: 'https://loisirpourtous.ca'
+          rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
+          cmd_options: '-a -t html -o zap_report.html'  # Génération d'un rapport HTML
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
-          name: Reports
+          name: reports
           path: |
-            test_report.txt
-            zap_report.html
-
+            test_report.html  # Rapport des tests
+            bandit_report.html  # Rapport Bandit
+            zap_report.html  # Rapport ZAP
