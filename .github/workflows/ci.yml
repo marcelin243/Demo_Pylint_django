@@ -25,16 +25,19 @@ jobs:
         
       - name: Install Dependencies
         run: |
+          set -e  # Arrête le script si une commande échoue
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install bandit  # Installation de Bandit
       
       - name: Run Tests
         run: |
+          set -e  # Arrête le script si une commande échoue
           python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
 
       - name: Run SAST (Bandit)
         run: |
+          set -e  # Arrête le script si une commande échoue
           bandit -r pylint_demo/ -f screen  # Exécution de Bandit et affichage des résultats dans les logs
 
       - name: ZAP Scan
@@ -47,6 +50,7 @@ jobs:
           cmd_options: '-a'  # Génération d'un rapport HTML
 
       - name: Upload Reports
+        if: success()  
         uses: actions/upload-artifact@v3
         with:
           name: reports
