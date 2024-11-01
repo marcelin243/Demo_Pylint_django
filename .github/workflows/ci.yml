@@ -1,4 +1,4 @@
-name: Analyse de base OWASP ZAP
+name: OWASP ZAP Scan
 
 on:
   push:
@@ -8,24 +8,22 @@ on:
 
 jobs:
 
-  test-zap:
+  security-scan:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v2
     
-    - name: Analyse de base OWASP ZAP
-      id: owasp_zap
+    - name: OWASP ZAP Scan
       uses: zaproxy/action-baseline@v0.6.1
       with:
-        target: 'http://127.0.0.1:8000/'
+        target: 'http://34.170.134.227:8080/'
         rules_file_name: 'gen.conf'
-        report_name: 'testreport.html'
-        allow_failure: true
+        docker_name: 'owasp/zap2docker-weekly'
         
-    - name: Télécharger le rapport OWASP ZAP
+    - name: Upload ZAP Report
       uses: actions/upload-artifact@v4
       with:
-        name: Rapport OWASP ZAP
-        path: testreport.html
+        name: ZAP Report
+        path: report.html
         if-no-files-found: ignore
