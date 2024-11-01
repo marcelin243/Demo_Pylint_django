@@ -1,4 +1,4 @@
-name: OWASP ZAP Baseline Scan
+name: Analyse de base OWASP ZAP
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: OWASP ZAP Baseline Scan
+    - name: Analyse de base OWASP ZAP
       id: owasp_zap
       uses: zaproxy/action-baseline@v0.6.1
       with:
@@ -23,9 +23,9 @@ jobs:
         report_name: 'testreport.html'
         allow_failure: true
         
-    - name: Upload OWASP ZAP report
-      uses: actions/upload-artifact@v2
+    - name: Télécharger le rapport OWASP ZAP
+      uses: actions/upload-artifact@v4
       with:
-        name: OWASP ZAP Report
+        name: Rapport OWASP ZAP
         path: testreport.html
         if-no-files-found: ignore
