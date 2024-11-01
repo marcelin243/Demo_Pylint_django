@@ -27,11 +27,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install bandit pylint pytest pytest-html
+          pip install bandit pylint pytest-html  # Only necessary dependencies for the job
 
-      - name: Run Tests with pytest
+      - name: Run Tests with Django
         run: |
-          pytest pylint_demo/ --html=test_report.html --self-contained-html --verbosity=2
+          python pylint_demo/manage.py test --verbosity=2
+        env:
+          DJANGO_SETTINGS_MODULE: pylint_demo.settings  # Ensure settings are specified
 
       - name: Run SAST (Bandit)
         run: |
@@ -40,6 +42,8 @@ jobs:
       - name: Start Django Server
         run: |
           python pylint_demo/manage.py runserver 0.0.0.0:8000 &
+        env:
+          DJANGO_SETTINGS_MODULE: pylint_demo.settings
 
       - name: Wait for Server to Start
         run: |
@@ -55,13 +59,12 @@ jobs:
       - name: Run DAST (ZAP Scan)
         run: |
           docker run --rm -t -v $(pwd):/zap/wrk/:rw -u zap zaproxy/zap2docker-stable zap-baseline.py \
-          -t http://localhost:8000 -r zap_report.html
+          -t http://loisirpourtous.ca -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
         with:
           name: Reports
           path: |
-            test_report.html
             bandit_report.html
             zap_report.html
