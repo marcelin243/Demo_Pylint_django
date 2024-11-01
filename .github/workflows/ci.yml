@@ -31,7 +31,7 @@ jobs:
       
       - name: Run Tests
         run: |
-          python manage.py test --verbosity=2 | tee test_report.html  # Exécute les tests
+          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
 
       - name: Run SAST (Bandit)
         run: |
