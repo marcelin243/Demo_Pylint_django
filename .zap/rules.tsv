@@ -1,0 +1,11 @@
+# Rule ID	Rule Name	Severity
+10001	Information Disclosure	Low
+10002	Cross-Site Scripting (XSS)	Medium
+10003	SQL Injection	High
+10004	Cross-Site Request Forgery (CSRF)	High
+10005	Insecure Direct Object Reference	Medium
+10006	Security Misconfiguration	Medium
+10007	Broken Authentication	High
+10008	Sensitive Data Exposure	Critical
+10009	XML External Entity (XXE) Injection	High
+10010	Insufficient Logging & Monitoring	Medium
