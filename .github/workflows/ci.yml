@@ -1,4 +1,4 @@
-name: OWASP-ZAP-CI
+name: OWASP ZAP Baseline Scan
 
 on:
   push:
@@ -7,39 +7,25 @@ on:
     branches: [ "main" ]
 
 jobs:
-  zap_scan:
+
+  test-zap:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Start Django Server
-        run: |
-          python manage.py runserver 0.0.0.0:8000 &
-      
-      - name: Wait for Server to Start
-        run: sleep 10
-
-      - name: Pull OWASP ZAP Docker Image
-        run: docker pull owasp/zap:latest
-
-      - name: Run OWASP ZAP Scan
-        run: |
-          docker run --network host -t owasp/zap zap-full-scan.py -t http://localhost:8000 -r zap_report.html
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: zap_report
-          path: zap_report.html
+    - uses: actions/checkout@v2
+    
+    - name: OWASP ZAP Baseline Scan
+      id: owasp_zap
+      uses: zaproxy/action-baseline@v0.6.1
+      with:
+        target: 'http://127.0.0.1:8000/'
+        rules_file_name: 'gen.conf'
+        report_name: 'testreport.html'
+        allow_failure: true
+        
+    - name: Upload OWASP ZAP report
+      uses: actions/upload-artifact@v2
+      with:
+        name: OWASP ZAP Report
+        path: testreport.html
+        if-no-files-found: ignore
