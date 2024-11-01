@@ -29,9 +29,9 @@ jobs:
           pip install -r requirements.txt
           pip install bandit pylint pytest pytest-html
 
-      - name: Run Tests
+      - name: Run Tests with pytest
         run: |
-          python pylint_demo/manage.py test --verbosity=2 --keepdb --failfast --html=test_report.html
+          pytest pylint_demo/ --html=test_report.html --self-contained-html --verbosity=2
 
       - name: Run SAST (Bandit)
         run: |
@@ -55,7 +55,7 @@ jobs:
       - name: Run DAST (ZAP Scan)
         run: |
           docker run --rm -t -v $(pwd):/zap/wrk/:rw -u zap zaproxy/zap2docker-stable zap-baseline.py \
-          -t http://loisirpourtous.ca -r zap_report.html
+          -t http://localhost:8000 -r zap_report.html
 
       - name: Upload Reports
         uses: actions/upload-artifact@v3
