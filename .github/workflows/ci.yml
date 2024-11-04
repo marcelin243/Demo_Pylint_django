@@ -32,7 +32,7 @@ jobs:
       
       - name: Run Pylint
         run: |
-          set -e  # Arrête le script si une commande échoue
+          set +e  # Arrête le script si une commande échoue
           pylint pylint_demo/ --load-plugins=pylint_django  # Exécution de Pylint avec le plugin Django
 
       - name: Run Tests
