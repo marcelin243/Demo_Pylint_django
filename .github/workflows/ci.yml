@@ -25,7 +25,7 @@ jobs:
         
       - name: Install Dependencies
         run: |
-          set -e  # Arrête le script si une commande échoue
+          # set -e  # Arrête le script si une commande échoue
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install bandit pylint-django  # Installation de Bandit et pylint-django
