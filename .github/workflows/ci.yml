@@ -28,8 +28,13 @@ jobs:
           set -e  # Arrête le script si une commande échoue
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install bandit  # Installation de Bandit
+          pip install bandit pylint-django  # Installation de Bandit et pylint-django
       
+      - name: Run Pylint
+        run: |
+          set -e  # Arrête le script si une commande échoue
+          pylint pylint_demo/ --load-plugins=pylint_django  # Exécution de Pylint avec le plugin Django
+
       - name: Run Tests
         run: |
           set -e  # Arrête le script si une commande échoue
