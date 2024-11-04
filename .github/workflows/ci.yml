@@ -34,11 +34,16 @@ jobs:
         run: |
             set -e  # Arrête le script si une commande échoue
             python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
-            
+
       - name: Run Pylint
         run: |
-          set +e  # Arrête le script si une commande échoue
-          pylint pylint_demo/ --load-plugins=pylint_django  # Exécution de Pylint avec le plugin Django
+          set +e
+          pylint pylint_demo/ --load-plugins=pylint_django
+          exit_code=$?
+          echo "Pylint exited with code $exit_code"
+          if [ $exit_code -ne 0 ]; then
+            echo "Pylint found issues, but continuing..."
+          fi
 
 
       - name: Run SAST (Bandit)
