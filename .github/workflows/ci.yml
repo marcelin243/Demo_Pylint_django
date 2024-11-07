@@ -29,20 +29,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install bandit pylint-django  # Installation de Bandit et pylint-django
-      
-      - name: Run Tests
-        run: |
-            set -e  # Arrête le script si une commande échoue
-            python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
-
+  
       - name: Run Pylint
         run: |
-          set +e
-          pylint pylint_demo/ --load-plugins=pylint_django
-          exit_code=$?
-          echo "Pylint exited with code $exit_code"
-          if [ $exit_code -ne 0 ]; then
-            echo "Pylint found issues, but continuing..."
+            set +e
+            pylint pylint_demo/ --load-plugins=pylint_django
+            exit_code=$?
+            echo "Pylint exited with code $exit_code"
+            if [ $exit_code -ne 0 ]; then
+              echo "Pylint found issues, but continuing..."
+            fi     
+
+
+      - name: Run Tests
+        run: |
+          set -e  # Arrête le script si une commande échoue
+          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
+          # Vérifiez le code de sortie et arrêtez le processus si des tests échouent
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+              echo "Les tests ont échoué."
+              exit 1  # Arrête le script avec une erreur
           fi
 
 
