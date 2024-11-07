@@ -85,7 +85,7 @@ jobs:
             -f "title=Alerte détectée dans le rapport" \
             -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
             -f "labels[]=alert" \
-            -H "Authorization: token ${{ secrets.MY_PAT }}"
+            -H "Authorization: token ${{ secrets.MY_PAT }}" 
 
       - name: Upload Reports
         if: success()  
