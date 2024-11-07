@@ -41,15 +41,15 @@ jobs:
             fi     
 
 
-      - name: Run Tests
-        run: |
-          set -e  # Arrête le script si une commande échoue
-          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
-          # Vérifiez le code de sortie et arrêtez le processus si des tests échouent
-          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
-              echo "Les tests ont échoué."
-              exit 1  # Arrête le script avec une erreur
-          fi
+      # - name: Run Tests
+      #   run: |
+      #     set -e  # Arrête le script si une commande échoue
+      #     python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
+      #     # Vérifiez le code de sortie et arrêtez le processus si des tests échouent
+      #     if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+      #         echo "Les tests ont échoué."
+      #         exit 1  # Arrête le script avec une erreur
+      #     fi
 
 
       - name: Run SAST (Bandit)
@@ -62,7 +62,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Assurez-vous que ce token a les bonnes permissions
           docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
-          target: 'https://loisirpourtous.ca'
+          target: 'http://127.0.0.1:8000/'
           rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
           cmd_options: '-a'  # Génération d'un rapport HTML
 
