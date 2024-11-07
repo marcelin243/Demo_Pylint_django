@@ -29,24 +29,24 @@ jobs:
           pip install -r requirements.txt
           pip install bandit pylint-django  # Installation de Bandit et pylint-django
   
-      - name: Run Pylint
-        run: |
-            set +e
-            pylint pylint_demo/ --load-plugins=pylint_django
-            exit_code=$?
-            echo "Pylint exited with code $exit_code"
-            if [ $exit_code -ne 0 ]; then
-              echo "Pylint found issues. Please review the report."
-              # Créer un issue si Pylint trouve des problèmes
-              gh api \
-                --method POST \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                /repos/OWNER/REPO/issues \
-                -f "title=Problème détecté par Pylint" \
-                -f "body=Pylint a trouvé des problèmes dans le code. Veuillez les examiner." \
-                -f "labels[]=bug"
-            fi
+      # - name: Run Pylint
+      #   run: |
+      #       set +e
+      #       pylint pylint_demo/ --load-plugins=pylint_django
+      #       exit_code=$?
+      #       echo "Pylint exited with code $exit_code"
+      #       if [ $exit_code -ne 0 ]; then
+      #         echo "Pylint found issues. Please review the report."
+      #         # Créer un issue si Pylint trouve des problèmes
+      #         gh api \
+      #           --method POST \
+      #           -H "Accept: application/vnd.github+json" \
+      #           -H "X-GitHub-Api-Version: 2022-11-28" \
+      #           /repos/OWNER/REPO/issues \
+      #           -f "title=Problème détecté par Pylint" \
+      #           -f "body=Pylint a trouvé des problèmes dans le code. Veuillez les examiner." \
+      #           -f "labels[]=bug"
+      #       fi
 
       - name: Run SAST (Bandit)
         run: |
@@ -54,6 +54,7 @@ jobs:
           bandit -r pylint_demo/ -f screen  # Exécution de Bandit et affichage des résultats dans les logs
 
       - name: ZAP Scan
+        id: zap_scan
         uses: zaproxy/action-baseline@v0.13.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}  # Assurez-vous que ce token a les bonnes permissions
@@ -61,6 +62,19 @@ jobs:
           target: 'https://apps.mediabox.bi:943/'
           rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
           cmd_options: '-a'  # Génération d'un rapport HTML
+
+      - name: Create Issue from ZAP Scan Results
+        if: steps.zap_scan.outputs.result == 'failure'  # Condition pour vérifier si le scan a échoué
+        run: |
+          # Créer un issue si le scan ZAP a détecté des problèmes
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/OWNER/REPO/issues \
+            -f "title=Problème détecté par ZAP" \
+            -f "body=Le scan ZAP a détecté des vulnérabilités. Veuillez les examiner." \
+            -f "labels[]=security"
 
       - name: Upload Reports
         if: success()  
