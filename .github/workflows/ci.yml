@@ -48,6 +48,15 @@ jobs:
       #           -f "labels[]=bug"
       #       fi
 
+      - name: Run Tests
+        run: |
+          set -e
+          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+              echo "Les tests ont échoué."
+              exit 1
+          fi
+          
       - name: Run SAST (Bandit)
         run: |
           set -e  # Arrête le script si une commande échoue
