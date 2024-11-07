@@ -64,16 +64,17 @@ jobs:
           cmd_options: '-a'  # Génération d'un rapport HTML
 
       - name: Create Issue for Alerts
-        if: ${{ contains(steps.zap_scan.outputs.result, 'alert') }}  # Vérifiez si des alertes sont présentes
+        if: ${{ contains(steps.zap_scan.outputs.result, 'alert') }}
         run: |
-            gh api \
-              --method POST \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              /repos/OWNER/REPO/issues \
-              -f "title=Alerte détectée dans le rapport" \
-              -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
-              -f "labels[]=alert"
+              gh api \
+                --method POST \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                /repos/OWNER/REPO/issues \
+                -f "title=Alerte détectée dans le rapport" \
+                -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
+                -f "labels[]=alert" \
+                -H "Authorization: token ${{ secrets.MY_PAT }}"
 
       - name: Upload Reports
         if: success()  
