@@ -76,6 +76,8 @@ jobs:
 
       - name: Create Issue for Alerts
         if: steps.zap_scan.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.MY_PAT }}  # Assurez-vous que MY_PAT est référencé correctement
         run: |
           gh api \
             --method POST \
@@ -84,8 +86,7 @@ jobs:
             /repos/${{ github.repository }}/issues \
             -f "title=Alerte détectée dans le rapport" \
             -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
-            -f "labels[]=alert" \
-            -H "Authorization: token ${{ secrets.MY_PAT }}" 
+            -f "labels[]=alert" 
 
       - name: Upload Reports
         if: success()  
