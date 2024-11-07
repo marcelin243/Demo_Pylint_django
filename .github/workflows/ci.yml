@@ -88,10 +88,32 @@ jobs:
             -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
             -f "labels[]=alert" 
 
-      - name: Upload Reports
+# Étape pour uploader le rapport des tests
+      - name: Upload Test Report
         uses: actions/upload-artifact@v3
         with:
-          name: reports
-          path: test_report.txt  pylint_report.txt  bandit_report.txt  zap_report.txt  
+          name: test-report
+          path: test_report.txt
+
+      # Étape pour uploader le rapport Pylint
+      - name: Upload Pylint Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pylint-report
+          path: pylint_report.txt
+
+      # Étape pour uploader le rapport Bandit
+      - name: Upload Bandit Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-report
+          path: bandit_report.txt
+
+      # Étape pour uploader le rapport ZAP
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-report
+          path: zap_report.txt
 
     
