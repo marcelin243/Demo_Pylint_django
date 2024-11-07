@@ -52,7 +52,7 @@ jobs:
       - name: Run Tests
         run: |
           set -e
-          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.html
+          python pylint_demo/manage.py test pylint_demo --verbosity=2 | tee test_report.txt
           if [ "${PIPESTATUS[0]}" -ne 0 ]; then
               echo "Les tests ont échoué."
               exit 1
@@ -92,7 +92,10 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: reports
-          path: test_report.html  # Rapport des tests
-            
+          path: |
+            test_report.txt  # Rapport des tests
+            pylint_report.txt  # Rapport Pylint
+            bandit_report.txt  # Rapport Bandit
+            zap_report.txt  # Rapport ZAP
 
     
