@@ -29,24 +29,25 @@ jobs:
           pip install -r requirements.txt
           pip install bandit pylint-django  # Installation de Bandit et pylint-django
   
-      # - name: Run Pylint
-      #   run: |
-      #       set +e
-      #       pylint pylint_demo/ --load-plugins=pylint_django
-      #       exit_code=$?
-      #       echo "Pylint exited with code $exit_code"
-      #       if [ $exit_code -ne 0 ]; then
-      #         echo "Pylint found issues. Please review the report."
-      #         # Créer un issue si Pylint trouve des problèmes
-      #         gh api \
-      #           --method POST \
-      #           -H "Accept: application/vnd.github+json" \
-      #           -H "X-GitHub-Api-Version: 2022-11-28" \
-      #           /repos/OWNER/REPO/issues \
-      #           -f "title=Problème détecté par Pylint" \
-      #           -f "body=Pylint a trouvé des problèmes dans le code. Veuillez les examiner." \
-      #           -f "labels[]=bug"
-      #       fi
+      - name: Run Pylint
+        run: |
+          set +e
+          pylint pylint_demo/ --load-plugins=pylint_django > pylint_report.txt || true
+          exit_code=$?
+          echo "Pylint exited with code $exit_code"
+          if [ $exit_code -ne 0 ]; then
+            echo "Pylint found issues. Please review the report."
+            # Créer un issue si Pylint trouve des problèmes
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              /repos/${{ github.repository }}/issues \
+              -f "title=Problème détecté par Pylint" \
+              -f "body=Pylint a trouvé des problèmes dans le code. Veuillez les examiner." \
+              -f "labels[]=bug"
+          fi
+        continue-on-error: true  # Permet de continuer même en cas d'erreur    
 
       - name: Run Tests
         run: |
@@ -56,11 +57,11 @@ jobs:
               echo "Les tests ont échoué."
               exit 1
           fi
-          
+
       - name: Run SAST (Bandit)
         run: |
           set -e  # Arrête le script si une commande échoue
-          bandit -r pylint_demo/ -f screen  # Exécution de Bandit et affichage des résultats dans les logs
+          bandit -r pylint_demo/ -f html -o bandit_report.html  # Exécution de Bandit et génération d'un rapport HTML
 
       - name: ZAP Scan
         id: zap_scan
@@ -70,21 +71,21 @@ jobs:
           docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
           target: 'https://apps.mediabox.bi:943/'
           rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
-          cmd_options: '-a'  # Génération d'un rapport HTML
+          cmd_options: '-a -o zap_report.html'  # Génération d'un rapport HTML
         continue-on-error: true  # Permet de continuer même en cas d'erreur  
 
       - name: Create Issue for Alerts
-        if: ${{ contains(steps.zap_scan.outputs.result, 'alert') }}
+        if: steps.zap_scan.outcome == 'failure'
         run: |
-              gh api \
-                --method POST \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                /repos/OWNER/REPO/issues \
-                -f "title=Alerte détectée dans le rapport" \
-                -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
-                -f "labels[]=alert" \
-                -H "Authorization: token ${{ secrets.MY_PAT }}"
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            /repos/${{ github.repository }}/issues \
+            -f "title=Alerte détectée dans le rapport" \
+            -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
+            -f "labels[]=alert" \
+            -H "Authorization: token ${{ secrets.MY_PAT }}"
 
       - name: Upload Reports
         if: success()  
@@ -93,5 +94,6 @@ jobs:
           name: reports
           path: |
             test_report.html  # Rapport des tests
+            pylint_report.txt  # Rapport Pylint
             bandit_report.html  # Rapport Bandit
             zap_report.html  # Rapport ZAP
