@@ -92,10 +92,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: reports
-          path: |
-            test_report.txt  # Rapport des tests
-            pylint_report.txt  # Rapport Pylint
-            bandit_report.txt  # Rapport Bandit
-            zap_report.txt  # Rapport ZAP
+          path: test_report.txt  pylint_report.txt  bandit_report.txt  zap_report.txt  
 
     
