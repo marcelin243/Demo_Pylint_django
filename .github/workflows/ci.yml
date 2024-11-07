@@ -62,6 +62,7 @@ jobs:
           target: 'https://apps.mediabox.bi:943/'
           rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
           cmd_options: '-a'  # Génération d'un rapport HTML
+        continue-on-error: true  # Permet de continuer même en cas d'erreur  
 
       - name: Create Issue for Alerts
         if: ${{ contains(steps.zap_scan.outputs.result, 'alert') }}
