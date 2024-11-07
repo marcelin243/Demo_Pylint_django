@@ -63,18 +63,17 @@ jobs:
           rules_file_name: '.zap/rules.tsv'  # Assurez-vous que ce fichier de règles existe
           cmd_options: '-a'  # Génération d'un rapport HTML
 
-      - name: Create Issue from ZAP Scan Results
-        if: steps.zap_scan.outputs.result == 'failure'  # Condition pour vérifier si le scan a échoué
+      - name: Create Issue for Alerts
+        if: ${{ contains(steps.zap_scan.outputs.result, 'alert') }}  # Vérifiez si des alertes sont présentes
         run: |
-          # Créer un issue si le scan ZAP a détecté des problèmes
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            /repos/OWNER/REPO/issues \
-            -f "title=Problème détecté par ZAP" \
-            -f "body=Le scan ZAP a détecté des vulnérabilités. Veuillez les examiner." \
-            -f "labels[]=security"
+            gh api \
+              --method POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              /repos/OWNER/REPO/issues \
+              -f "title=Alerte détectée dans le rapport" \
+              -f "body=Des alertes ont été détectées dans le rapport d'analyse. Veuillez les examiner." \
+              -f "labels[]=alert"
 
       - name: Upload Reports
         if: success()  
