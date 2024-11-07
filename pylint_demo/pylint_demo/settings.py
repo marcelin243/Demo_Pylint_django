@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv  # Si vous utilisez un fichier .env
+
+load_dotenv()  # Charge les variables d'environnement à partir du fichier .env
 """
 Django settings for pylint_demo project.
 
@@ -21,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kt5x9@fm9$pck_-qz+u(raft^+3v59nkuts0q-_*_x=1_bd!k^'
+# SECRET_KEY = 'django-insecure-kt5x9@fm9$pck_-qz+u(raft^+3v59nkuts0q-_*_x=1_bd!k^'
 
-# SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
