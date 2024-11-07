@@ -94,7 +94,7 @@ jobs:
         with:
           name: reports
           path: |
-            test_report.txt  # Rapport des tests
+            
             pylint_report.txt  # Rapport Pylint
             bandit_report.txt  # Rapport Bandit
             zap_report.txt  # Rapport ZAP
